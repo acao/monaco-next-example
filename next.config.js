@@ -7,8 +7,11 @@ const MonacoWebpackPlugin = require("monaco-editor-webpack-plugin");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // this is necessary because monaco-editor
+  // imports css files which next.js doesn't like
   transpilePackages: ["monaco-editor"],
   webpack(config, _options) {
+    // this fixes some issues with loading webworkers
     config.output.publicPath = "/_next/";
     config.resolve.alias = {
       ...config.resolve.alias,
@@ -25,7 +28,7 @@ const nextConfig = {
       use: {
         loader: "worker-loader",
         options: {
-          filename: "static/graphql.worker.js",
+          filename: "static/[name].js",
           publicPath: '/_next/'
         },
       },

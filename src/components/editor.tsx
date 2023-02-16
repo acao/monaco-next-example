@@ -123,7 +123,6 @@ const createEditor = (
 ) => editor.create(ref.current as unknown as HTMLElement, options);
 
 export default function Editor() {
-  console.log("imported");
   const opsRef = React.useRef(null);
   const varsRef = React.useRef(null);
   const resultsRef = React.useRef(null);
