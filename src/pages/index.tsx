@@ -4,14 +4,13 @@ import dynamic from "next/dynamic";
 const DynamicEditor = dynamic(
   () => import("../components/editor"),
   {
-    // loading: () => <div>Loading...</div>,
     suspense: true,
     ssr: false,
   }
 );
 
+
 export default function Home() {
-  console.log('hello')
   return (
     <>
       <Head>

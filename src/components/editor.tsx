@@ -14,6 +14,8 @@ window.MonacoEnvironment = {
     if (label === GRAPHQL_LANGUAGE_ID) {
       // trick webpack into bundling it
       GraphQLWorker
+      // usually w/ webpack here we would return new GraphQLWorker(), 
+      // but worker-loader can't seem to find the worker w/ next.js _next prefix
       return new Worker('_next/static/graphql.worker.js');
     }
     if (label === 'json') {
@@ -22,6 +24,11 @@ window.MonacoEnvironment = {
     return new Worker('_next/static/editor.worker.js');
   },
 };
+
+/**
+ * Copied from graphql/graphiql/examples/monaco-graphql-vite
+ */
+
 
 function debounce<F extends (...args: any[]) => any>(duration: number, fn: F) {
   let timeout: number | null;
