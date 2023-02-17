@@ -4,27 +4,6 @@ import { Uri, editor, KeyMod, KeyCode, languages } from "monaco-editor";
 import { initializeMode } from "monaco-graphql/esm/initializeMode";
 import { createGraphiQLFetcher } from "@graphiql/toolkit";
 import * as JSONC from "jsonc-parser";
-
-import GraphQLWorker from 'monaco-graphql/esm/graphql.worker'; // eslint-disable-line import/default
-
-const GRAPHQL_LANGUAGE_ID = 'graphql';
-
-window.MonacoEnvironment = {
-  getWorker(_workerId: string, label: string) {
-    if (label === GRAPHQL_LANGUAGE_ID) {
-      // trick webpack into bundling it
-      GraphQLWorker
-      // usually w/ webpack here we would return new GraphQLWorker(), 
-      // but worker-loader can't seem to find the worker w/ next.js _next prefix
-      return new Worker('_next/static/graphql.worker.js');
-    }
-    if (label === 'json') {
-      return new Worker('_next/static/json.worker.js');
-    }
-    return new Worker('_next/static/editor.worker.js');
-  },
-};
-
 /**
  * Copied from graphql/graphiql/examples/monaco-graphql-vite
  */
