@@ -6,27 +6,32 @@ const path = require.path;
 const nextConfig = {
   reactStrictMode: true,
   trailingSlash: true,
-  // this is necessary because monaco-editor
-  // imports css files which next.js doesn't like
-  // transpilePackages: ["monaco-editor"],
   webpack(config, options) {
     // this fixes some issues with loading webworkers
     config.output.publicPath = "/_next/";
+    // because next.js doesn't like node_modules that import css files
+    // this solves the issue for monaco-editor, which relies on importing css files
     patchWebpackConfig(config, options);
     config.resolve.alias = {
       ...config.resolve.alias,
 
-      // this solves a bug with more recent `monaco-editor` versions innext.js,
-      // where a version of marked with modules pre-transpiled seems to break the build.
+      // this solves a bug with more recent `monaco-editor` versions in next.js,
+      // where vscode contains a version of `marked` with modules pre-transpiled, which seems to break the build.
       //
-      // it's an error that mentions that exports.Lexer is a const that can't be re-declared
+      // (the error mentions that exports.Lexer is a const that can't be re-declared)
       "../common/marked/marked.js": "marked",
     };
     if (!options.isServer) {
       config.plugins.push(
+        // if you find yourself needing to override 
+        // MonacoEnvironment.getWorkerUrl or MonacoEnvironment.getWorker,
+        // you probably just need to tweak configuration here.
         new MonacoWebpackPlugin({
+          // you can add other languages here as needed
           languages: ["json", "graphql"],
           filename: "static/[name].worker.js",
+          // this is not in the plugin readme, but saves us having to override
+          // MonacoEnvironment.getWorkerUrl or similar.
           customLanguages: [
             {
               label: "graphql",
@@ -39,7 +44,7 @@ const nextConfig = {
         })
       );
     }
-    // this ensures the custom graphql webworker transpiles to the correct place
+    // load monaco-editor provided ttf fonts
     config.module.rules.push({ test: /\.ttf$/, type: "asset/resource" });
     return config;
   },
